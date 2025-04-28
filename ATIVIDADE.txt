@@ -1,0 +1,124 @@
+CREATE DATABASE garagem;
+
+USE garagem;
+
+CREATE TABLE cliente(
+	
+	id_cliente INT NOT NULL AUTO_INCREMENT,
+    nome_cliente VARCHAR (45),
+	data_nascimento DATE,
+    PRIMARY KEY (id_cliente)
+    
+);
+
+CREATE TABLE categoria(
+
+	id_categoria INT NOT NULL AUTO_INCREMENT,
+    nome VARCHAR (45),
+	descricao TEXT,
+    PRIMARY KEY (id_categoria)
+
+);
+
+CREATE TABLE veiculo(
+
+	id_veiculo INT NOT NULL AUTO_INCREMENT,
+    placa VARCHAR (10),
+    cor VARCHAR (45),
+    id_cliente INT,
+    id_categoria INT,
+    PRIMARY KEY (id_veiculo)
+    
+);
+
+CREATE TABLE estacionamento(
+
+	id_estacionamento INT NOT NULL AUTO_INCREMENT,
+    nome VARCHAR (45),
+    capacidade INT,
+    data_entrega DATE,
+    data_saida DATE,
+    hora_entrada TIME,
+    hora_saida TIME,
+    id_veiculo INT,
+    PRIMARY KEY (id_estacionamento)
+
+);
+
+ALTER TABLE estacionamento
+ADD FOREIGN KEY (id_veiculo)
+REFERENCES veiculo (id_veiculo);
+
+ALTER TABLE veiculo
+ADD FOREIGN KEY (id_cliente)
+REFERENCES cliente (id_cliente);
+
+ALTER TABLE veiculo
+ADD FOREIGN KEY (id_categoria)
+REFERENCES categoria (id_categoria);
+
+INSERT INTO cliente
+(nome_cliente, data_nascimento)
+VALUES 
+('Tiago', '2008-10-06'),
+('Bundovisk','1985-03-25'),
+('Alfred','1975-05-31');
+
+	SELECT * FROM cliente;
+    
+INSERT INTO categoria
+(nome, descricao)
+VALUES
+('Utilitário','veiculo de 5 lugares.'),
+('Van','Transportar passageiros e cargas.'),
+('Pick-up','caçamba traseira aberta e um chassis elevado.');
+
+SELECT * FROM categoria;
+
+INSERT INTO veiculo
+(placa, cor, id_cliente, id_categoria)
+VALUES
+('654H-WEF1','Azul',2,1),
+('78WC-2WD3W','Branco',1,3);
+
+SELECT * FROM veiculo;
+
+INSERT INTO estacionamento
+(nome, capacidade, data_entrega, data_saida, hora_entrada, hora_saida, id_veiculo)
+VALUES
+('Jubileu Jorge', 120, '2025-03-05', '2025-03-10','14:30:00','18:30:00', 2),
+('Residencial Credosvaldo', 40,'2024-05-03','2025-07-12','12:25:00','15:48:59', 3),
+('Floripa Shopping', 1500, '2025-04-01','2025-04-01','12:00:23','00:00:23', 1);
+
+SELECT * FROM veiculo
+INNER JOIN categoria
+ON categoria.id_categoria = veiculo.id_categoria
+INNER JOIN cliente
+ON cliente.id_cliente = veiculo.id_cliente;
+
+SELECT * FROM cliente
+LEFT JOIN veiculo 
+ON veiculo.id_cliente = cliente.id_cliente;
+
+SELECT * FROM categoria
+RIGHT JOIN veiculo 
+ON veiculo.id_categoria = veiculo.id_veiculo;
+
+SELECT * FROM categoria
+FULL JOIN veiculo 
+ON veiculo.id_categoria = veiculo.id_veiculo;
+
+SELECT * FROM cliente
+LEFT JOIN veiculo 
+ON veiculo.id_cliente = cliente.id_cliente
+UNION
+SELECT * FROM cliente
+RIGHT JOIN veiculo 
+ON veiculo.id_cliente = cliente.id_cliente;
+
+CREATE VIEW vw_veiculo_cliente AS
+SELECT veiculo.id_veiculo, veiculo.placa, veiculo.cor, cliente.nome_cliente FROM cliente
+INNER JOIN veiculo
+ON veiculo.id_veiculo = veiculo.id_cliente;
+
+SELECT * FROM vw_veiculo_cliente;
